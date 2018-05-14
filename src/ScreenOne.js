@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
-import {  View, Text,StyleSheet, TouchableHighlight,TouchableOpacity,DrawerLayoutAndroid } from 'react-native';
+import {  View, Text,StyleSheet,Image, TouchableHighlight,TouchableOpacity,DrawerLayoutAndroid,Alert } from 'react-native';
 import { Header,Button,Icon } from 'native-base';
 
 import {StackNavigator} from 'react-navigation';
 
 import FadeView from './FadeView';
+
+import BackgroundTask from 'react-native-background-task';
+ 
+
+BackgroundTask.define(() => {
+  Alert.alert('Hello from a background task')
+  BackgroundTask.finish()
+})
 
 class ScreenOne extends Component {
 
@@ -22,7 +30,7 @@ class ScreenOne extends Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return{
-            title: "Welcome to StackNavigator",
+            title: "Welcome to Navigation project",
             headerLeft:
             <TouchableOpacity onPress={()=>params.handleRemove()}>
                 <Icon ios='ios-menu' android='md-menu' style={{marginLeft:5}}/>
@@ -30,8 +38,28 @@ class ScreenOne extends Component {
         }
     };
     componentDidMount(){
-        this.props.navigation.setParams({handleRemove:this.openDrawerVar});
+        //this.props.navigation.setParams({handleRemove:this.openDrawerVar});
+        BackgroundTask.schedule({
+            period: 30,
+        })
+        this.checkStatus()
     }
+    async checkStatus() {
+        const status = await BackgroundTask.statusAsync()
+        
+        if (status.available) {
+          // Everything's fine
+          return
+        }
+        
+        const reason = status.unavailableReason
+        if (reason === BackgroundTask.UNAVAILABLE_DENIED) {
+          Alert.alert('Denied', 'Please enable background "Background App Refresh" for this app')
+        } else if (reason === BackgroundTask.UNAVAILABLE_RESTRICTED) {
+          Alert.alert('Restricted', 'Background tasks are restricted on your device')
+        }
+      }
+
     
     _alertaaa=()=>{
         alert('Alerta activa');
@@ -87,6 +115,12 @@ class ScreenOne extends Component {
                     <Text style={styles.buttonText } > Menu </Text>
                 </TouchableHighlight>
                 </FadeView>
+                
+                <Image
+                style={{width: 50, height: 50, marginTop:20}}
+                source={require('/Users/JORGE.DELGADO/NavigationProject/src/file-1.png')}
+                />
+                
             </View>
         </DrawerLayoutAndroid>
     );

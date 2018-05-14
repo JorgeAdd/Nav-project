@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import {  View, Text, TouchableHighlight,StyleSheet } from 'react-native';
+import {  View, Text, TouchableHighlight,StyleSheet,WebView,Platform } from 'react-native';
 import {Container} from 'native-base';
+
+import Tarjeta from './Tarjeta';
 
 class ScreenTwo extends Component {
     static navigationOptions = {
@@ -9,9 +11,20 @@ class ScreenTwo extends Component {
   render() {
       const{state,navigate} = this.props.navigation;
     return (
-      <Container style={styles.container}>
-        <View style={styles.buttonContainer}>
-        
+        <View>
+            <Tarjeta/>
+            
+        {/*
+        <WebView
+                    style={ styles.WebViewContainer }
+                    javaScriptEnabled={true}
+                    
+                    //tgbNymZ7vqY WORKS
+                    //ySoeapm4hpM VEVO
+                    source={{uri: 'https://www.youtube.com/embed/tgbNymZ7vqY?rel=0&amp;showinfo=0'}}
+            />
+
+
         <TouchableHighlight onPress={() => this.props.navigation.goBack()}
             style={[styles.button, {backgroundColor: '#C56EE0'}]}>
                 <Text style={styles.buttonText}>Go back</Text>
@@ -20,10 +33,10 @@ class ScreenTwo extends Component {
             <TouchableHighlight onPress={() => navigate("ScreenThree",{screen:"Screen*Three"})}
             style={[styles.button, {backgroundColor: '#4286f4'}]}>
                 <Text style={styles.buttonText}>Go forward</Text>
-            </TouchableHighlight>
-            
+            </TouchableHighlight>*/}
         </View>
-      </Container>
+        
+            
     );
   }
 }
@@ -39,7 +52,7 @@ const styles = StyleSheet.create({
         fontSize:22
     },
     buttonContainer:{
-        flexDirection: 'row',
+        flexDirection: 'column',
         marginLeft: 20,
         marginRight: 20,
         marginTop: 20,
@@ -56,7 +69,12 @@ const styles = StyleSheet.create({
         color:'white',
         fontSize: 18,
         alignSelf: 'center'
-    }
+    },
+    WebViewContainer: {
+ 
+        marginTop: (Platform.OS == 'ios') ? 20 : 0,
+     
+      }
 });
 
 export default ScreenTwo;
