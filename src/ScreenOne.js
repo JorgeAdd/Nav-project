@@ -6,13 +6,37 @@ import {StackNavigator} from 'react-navigation';
 
 import FadeView from './FadeView';
 
-import BackgroundTask from 'react-native-background-task';
- 
+import PushNotif from 'react-native-push-notification';
 
-BackgroundTask.define(() => {
-  Alert.alert('Hello from a background task')
-  BackgroundTask.finish()
-})
+//import BackgroundTask from 'react-native-background-task';
+ import BackgroundJob from 'react-native-background-job';
+
+//BackgroundTask.define(
+ // Alert.alert('Hello from a background task'),
+ // console.log('background'),
+  
+//  BackgroundTask.finish()
+//)
+const backgroundJob = {
+    jobKey: "myJob",
+    job: () => {console.log("Running in background"),
+    PushNotif.localNotification({
+        message:'Notificación creada'
+    })}
+    
+   };
+   
+   BackgroundJob.register(backgroundJob);
+   
+   var backgroundSchedule = {
+    jobKey: "myJob",
+    period: 900000,
+    exact: true,
+    allowWhileIdle:true,
+    allowExecutionInForeground: true,
+    timeout: 5000
+   }
+   
 
 class ScreenOne extends Component {
 
@@ -38,29 +62,44 @@ class ScreenOne extends Component {
         }
     };
     componentDidMount(){
-        //this.props.navigation.setParams({handleRemove:this.openDrawerVar});
-        BackgroundTask.schedule({
-            period: 30,
-        })
-        this.checkStatus()
+        this.props.navigation.setParams({handleRemove:this.openDrawerVar});
+        BackgroundJob.schedule(backgroundSchedule);
+
+        PushNotif.configure({
+            onNotification: function(notification){
+                this.handleNotification.bind(this);
+            }.bind(this),
+        });
+
+  //      BackgroundTask.schedule()
+   //     this.checkStatus()
     }
-    async checkStatus() {
-        const status = await BackgroundTask.statusAsync()
+    // async checkStatus() {
+    //     const status = await BackgroundTask.statusAsync()
         
-        if (status.available) {
-          // Everything's fine
-          return
-        }
+    //     if (status.available) {
+    //       // Everything's fine
+    //       console.log('fine');
+          
+    //       return
+    //     }
         
-        const reason = status.unavailableReason
-        if (reason === BackgroundTask.UNAVAILABLE_DENIED) {
-          Alert.alert('Denied', 'Please enable background "Background App Refresh" for this app')
-        } else if (reason === BackgroundTask.UNAVAILABLE_RESTRICTED) {
-          Alert.alert('Restricted', 'Background tasks are restricted on your device')
-        }
-      }
+    //     const reason = status.unavailableReason
+    //     if (reason === BackgroundTask.UNAVAILABLE_DENIED) {
+    //       Alert.alert('Denied', 'Please enable background "Background App Refresh" for this app')
+    //     } else if (reason === BackgroundTask.UNAVAILABLE_RESTRICTED) {
+    //       Alert.alert('Restricted', 'Background tasks are restricted on your device')
+    //     }
+    //   }
 
     
+    createPushNotification=()=>{
+        console.log('Notif creada');
+        PushNotif.localNotification({
+            message:'Notificación creada'
+        });
+    }
+
     _alertaaa=()=>{
         alert('Alerta activa');
     }

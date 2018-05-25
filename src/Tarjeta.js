@@ -1,100 +1,158 @@
-import React, { Component } from 'react';
-import {  View,Image,Alert } from 'react-native';
-import { Button,Text, Container,Icon, Item } from 'native-base';
+'use strict';
 
-import PushNotif from 'react-native-push-notification';
+import React, {Component} from 'react';
+import {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  TouchableHighlight
+} from 'react-native';
 
+import {NotificationsAndroid, PendingNotifications} from 'react-native-notifications';
 
-export default class Tarjeta extends Component {
+let mainScreen;
 
-    constructor(props){
-        super(props);
-		this.handleNotification = this.handleNotification.bind(this);
-        this.state={
-            likesVar:0,
-        }
-    }
-
-    handleNotification(notification) {
-        console.log(this.state.likesVar);
-      }
-
-    componentDidMount=()=>{
-        PushNotif.configure({
-            onNotification: function(notification){
-                this.handleNotification.bind(this);
-            }.bind(this),
-        });
-    }
-
-    createPushNotification=()=>{
-        console.log('Notif creada');
-        PushNotif.localNotification({
-            message:'tu foto tiene '+(this.state.likesVar+1)+' likes'
-        });
-    }
-    /*
-    createPushNotification = () => {
-        console.log(this.state.likesVar+'Likes pressed')
-    
-        PushNotification.localNotification({
-          title:'NavProject',
-          ticker:'ticker',
-          message: "Tu foto tiene "+this.state.likesVar+" likes",
-          color:'blue'
-          
-        });                      NOTIFICACION DESPUÉS DE 5 SEGUNDOS
-        PushNotification.localNotificationSchedule({
-          message: "My Notification Message", // (required)
-          date: new Date(Date.now() + (5 * 1000))
-        });
-      }*/
-
-    like(){
-        this.setState({
-            likesVar:this.state.likesVar+1})
-        
-        console.log('likes '+(this.state.likesVar));
-        this.createPushNotification();
-        // Alert.alert((this.state.likesVar+1)+' likes');
-    }
-
-    render() {
-        const zeroLikes= <Text>like</Text> 
-        const noZeroLikes= <Text>{this.state.likesVar} likes</Text> 
-        {console.log('likes inside '+(this.state.likesVar))}
-    return (
-    <View>
-        {/*<Header>
-          <Body>
-            <Title>Demo App</Title>
-          </Body>
-        </Header>
-        <Card>
-            <CardItem header>*/}
-            <Text style={{fontSize:20,color:'#555555',alignSelf:'center',marginTop:5}}>React Native</Text>
-            
-            <Image
-                style={{width: 400,height: 150,marginLeft:6}}
-                source={require('../src/reactNativeImage.png')}
-        />
-            <Container style={{flex:1,flexDirection:'row'}}>
-                <Button transparent onPress={()=>this.like()}>
-
-                        {this.state.likesVar == 0 ? zeroLikes : noZeroLikes}
-                    
-                </Button>
-                <Button transparent >
-                    <Text>144 Comments</Text>
-                </Button>
-                
-                <Button transparent >
-                    <Text>share</Text>
-                </Button>
-               
-            </Container>
-            
-      </View>
-    );
+function onPushRegistered() {
+  if (mainScreen) {
+    mainScreen.onPushRegistered();
   }
 }
+
+function onNotificationOpened(notification) {
+  if (mainScreen) {
+    mainScreen.onNotificationOpened(notification)
+  }
+}
+
+function onNotificationReceived(notification) {
+  if (mainScreen) {
+    mainScreen.onNotificationReceived(notification)
+  }
+}
+
+// It's highly recommended to keep listeners registration at global scope rather than at screen-scope seeing that
+// component mount and unmount lifecycle tend to be asymmetric!
+NotificationsAndroid.setRegistrationTokenUpdateListener(onPushRegistered);
+NotificationsAndroid.setNotificationOpenedListener(onNotificationOpened);
+NotificationsAndroid.setNotificationReceivedListener(onNotificationReceived);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  titleText: {
+    fontSize: 24,
+    textAlign: 'center',
+    margin: 10,
+  },
+  bodyText: {
+    fontSize: 18,
+    textAlign: 'center',
+    margin: 10,
+  },
+  mainButtonText: {
+    fontSize: 25,
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 10,
+  },
+  plainButtonText: {
+    fontSize: 18,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    margin: 10,
+  },
+});
+
+class MainComponent extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.onPostNotification = this.onPostNotification.bind(this);
+    this.onCancelNotification = this.onCancelNotification.bind(this);
+
+    this.state = {
+      elapsed: 0,
+      lastNotification: undefined
+    };
+
+    console.log('ReactScreen', 'ReactScreen');
+    mainScreen = this;
+
+    setInterval(this.onTick.bind(this), 1000);
+  }
+
+  componentDidMount() {
+    console.log('ReactScreen', 'componentDidMount');
+    PendingNotifications.getInitialNotification()
+      .then((notification) => {console.log("getInitialNotification:", notification); this.setState({initialNotification: (notification ? notification.getData() : undefined)});})
+      .catch((err) => console.error("getInitialNotifiation failed", err));
+  }
+
+  componentWillUnmount() {
+    console.log('ReactScreen', 'componentWillUnmount');
+  }
+
+  onTick() {
+    this.setState({elapsed: this.state.elapsed + 1});
+  }
+
+  onPostNotification() {
+    this.lastNotificationId = NotificationsAndroid.localNotification({title: "Local notification", body: "This notification was generated by the app!"});
+  }
+
+  onCancelNotification() {
+    if (this.lastNotificationId) {
+      NotificationsAndroid.cancelLocalNotification(this.lastNotificationId);
+      this.lastNotificationId = undefined;
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.titleText}>Wix React Native Notifications</Text>
+        <Text style={styles.bodyText}>{this.state.initialNotification ? 'Opened from notification' : ''}</Text>
+        <Text style={styles.bodyText}>Last notification: {this.state.lastNotification ? '\n'+this.state.lastNotification.body + ` (opened at ''${this.state.notificationRxTime})` : "N/A"}</Text>
+        <Text style={styles.bodyText}>Time elapsed: {this.state.elapsed}</Text>
+        <Text>{"\n\n"}</Text>
+        <TouchableHighlight onPress={() => this.onPostNotification()}>
+          <Text style={styles.mainButtonText}>Try Me!</Text>
+        </TouchableHighlight>
+        <TouchableHighlight onPress={() => this.onCancelNotification()}>
+          <Text style={styles.plainButtonText}>Undo last</Text>
+        </TouchableHighlight>
+        <TouchableHighlight onPress={() => this.onCheckPermissions()}>
+          <Text style={styles.plainButtonText}>Check permissions</Text>
+        </TouchableHighlight>
+      </View>
+    )
+  }
+
+  async onCheckPermissions() {
+    const hasPermissions = await NotificationsAndroid.isRegisteredForRemoteNotifications();
+    if (hasPermissions) {
+      alert('Yay! You have permissions');
+    } else {
+      alert('Boo! You don\'t have permissions');
+    }
+  }
+
+  onPushRegistered() {
+  }
+
+  onNotificationOpened(notification) {
+    console.log("onNotificationOpened: ", notification);
+    this.setState({lastNotification: notification.getData(), notificationRxTime: this.state.elapsed});
+  }
+
+  onNotificationReceived(notification) {
+    console.log("onNotificationReceived: ", notification);
+  }
+}
+
+AppRegistry.registerComponent('WixRNNotifications', () => MainComponent);
