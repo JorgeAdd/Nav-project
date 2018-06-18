@@ -19,10 +19,14 @@ import PushNotif from 'react-native-push-notification';
 //)
 const backgroundJob = {
     jobKey: "myJob",
-    job: () => {console.log("Running in background"),
-    PushNotif.localNotification({
-        message:'Notificación creada'
-    })}
+    job: () => {
+        console.log("Running in background"),
+        PushNotif.localNotification({
+            message:'Notificación creada',
+            group:"notifica",
+            ongoing:true
+        })
+    }
     
    };
    
@@ -67,7 +71,7 @@ class ScreenOne extends Component {
 
         PushNotif.configure({
             onNotification: function(notification){
-                this.handleNotification.bind(this);
+                
             }.bind(this),
         });
 
@@ -94,9 +98,13 @@ class ScreenOne extends Component {
 
     
     createPushNotification=()=>{
-        console.log('Notif creada');
+        console.log('Notif menu creada');
         PushNotif.localNotification({
-            message:'Notificación creada'
+            id:3,
+            message:'Notificación menu creada',
+            tag:'tag',
+            group:"notifica",
+            ongoing:false
         });
     }
 
@@ -149,7 +157,7 @@ class ScreenOne extends Component {
                     <Text style={styles.buttonText } > Screen One </Text>
                 </TouchableHighlight>
                 <FadeView>
-                <TouchableHighlight onPress={this.openDrawerVar} style={styles.button2}>
+                <TouchableHighlight onPress={this.createPushNotification.bind(this)} style={styles.button2}>
 
                     <Text style={styles.buttonText } > Menu </Text>
                 </TouchableHighlight>
