@@ -12,7 +12,9 @@ class ScreenTwo extends Component {
       const{state,navigate} = this.props.navigation;
     return (
         <View>
-            <Tarjeta/>
+            {//<Tarjeta/>
+            }
+            <Text>Hola</Text>
             
         {/*
         <WebView

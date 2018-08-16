@@ -6,10 +6,12 @@ import {StackNavigator} from 'react-navigation';
 
 import FadeView from './FadeView';
 
-import PushNotif from 'react-native-push-notification';
+//import PushNotif from 'react-native-push-notification';
 
 //import BackgroundTask from 'react-native-background-task';
  import BackgroundJob from 'react-native-background-job';
+
+ import OneSignal from 'react-native-onesignal';
 
 //BackgroundTask.define(
  // Alert.alert('Hello from a background task'),
@@ -20,12 +22,12 @@ import PushNotif from 'react-native-push-notification';
 const backgroundJob = {
     jobKey: "myJob",
     job: () => {
-        console.log("Running in background"),
-        PushNotif.localNotification({
-            message:'Notificación creada',
-            group:"notifica",
-            ongoing:true
-        })
+        console.log("Running in background")
+        // PushNotif.localNotification({
+        //     message:'Notificación creada',
+        //     group:"notifica",
+        //     ongoing:true
+        // })
     }
     
    };
@@ -50,8 +52,26 @@ class ScreenOne extends Component {
         this.closeDrawerVar = this.closeDrawer.bind(this);
         this.state={
             abierto:false,
+            iconBadge:4
         }
+        console.log('before');
+        
+        
+        // Notifications.getApplicationIconBadgeNumber = function() {
+        //     return this.callNative('getApplicationIconBadgeNumber', arguments);
+        // };
+        
+        this.counterBadge();
     }
+    
+    counterBadge(){
+        console.log('method');
+        
+ //       PushNotif.setApplicationIconBadgeNumber = this.state.iconBadge
+    }
+    componentWillMount() {
+        OneSignal.init("dc45f8d7-a53e-4a41-a652-760f496607a5");
+   }
 
     
 
@@ -69,11 +89,11 @@ class ScreenOne extends Component {
         this.props.navigation.setParams({handleRemove:this.openDrawerVar});
         BackgroundJob.schedule(backgroundSchedule);
 
-        PushNotif.configure({
-            onNotification: function(notification){
+        // PushNotif.configure({
+        //     onNotification: function(notification){
                 
-            }.bind(this),
-        });
+        //     }.bind(this),
+        // });
 
   //      BackgroundTask.schedule()
    //     this.checkStatus()
@@ -96,17 +116,23 @@ class ScreenOne extends Component {
     //     }
     //   }
 
-    
-    createPushNotification=()=>{
-        console.log('Notif menu creada');
-        PushNotif.localNotification({
-            id:3,
-            message:'Notificación menu creada',
-            tag:'tag',
-            group:"notifica",
-            ongoing:false
-        });
+    cancelNotification(){
+       // PushNotif.cancelLocalNotifications({id:'3'});
     }
+
+    
+    // createPushNotification=()=>{
+    //     this.cancelNotification();
+    //     console.log('Notif menu creada');
+    //     PushNotif.localNotification({
+    //         id:'3',
+    //         message:'Notificación menu creada',
+    //         tag:'tag',
+    //         group:"notifica",
+    //         ongoing:false,
+                        
+    //     });
+    // }
 
     _alertaaa=()=>{
         alert('Alerta activa');
@@ -157,9 +183,9 @@ class ScreenOne extends Component {
                     <Text style={styles.buttonText } > Screen One </Text>
                 </TouchableHighlight>
                 <FadeView>
-                <TouchableHighlight onPress={this.createPushNotification.bind(this)} style={styles.button2}>
+                <TouchableHighlight style={styles.button2}>
 
-                    <Text style={styles.buttonText } > Menu </Text>
+                    <Text style={styles.buttonText } > Notification </Text>
                 </TouchableHighlight>
                 </FadeView>
                 
