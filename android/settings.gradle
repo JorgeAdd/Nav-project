@@ -1,4 +1,6 @@
 rootProject.name = 'NavigationProject'
+include ':react-native-onesignal'
+project(':react-native-onesignal').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-onesignal/android')
 include ':react-native-background-job'
 project(':react-native-background-job').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-job/android')
 include ':react-native-background-task'

@@ -11,7 +11,7 @@ import FadeView from './FadeView';
 //import BackgroundTask from 'react-native-background-task';
  import BackgroundJob from 'react-native-background-job';
 
- import OneSignal from 'react-native-onesignal';
+//  import OneSignal from 'react-native-onesignal';
 
 //BackgroundTask.define(
  // Alert.alert('Hello from a background task'),
@@ -70,7 +70,7 @@ class ScreenOne extends Component {
  //       PushNotif.setApplicationIconBadgeNumber = this.state.iconBadge
     }
     componentWillMount() {
-        OneSignal.init("dc45f8d7-a53e-4a41-a652-760f496607a5");
+        // OneSignal.init("dc45f8d7-a53e-4a41-a652-760f496607a5");
    }
 
     

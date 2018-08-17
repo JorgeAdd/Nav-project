@@ -1,41 +1,43 @@
 import React, { Component } from 'react';
 import {  View, Text, TouchableHighlight,StyleSheet,WebView,Platform } from 'react-native';
-import {Container} from 'native-base';
+import {Container, Button} from 'native-base';
 
 import Tarjeta from './Tarjeta';
+
+import OneSignal from 'react-native-onesignal';
 
 class ScreenTwo extends Component {
     static navigationOptions = {
         title: "Screen Two",
     }
+
+    componentDidMount(){
+        let playerId = "6d552a4b-3a95-4701-9866-681a003b5b2b";
+        let otherParameters = null;
+        let data = ["data"]
+        let contents = {
+            'en': 'You got notification from React-native'
+        }   
+       // OneSignal.postNotification(contents,data,playerId);
+
+            OneSignal.sendTags({
+              "userId": 'jdelgado@frontrunnertechnologies.net'
+            });
+    }
+    pressing(){
+        alert('k');
+    }
+
   render() {
       const{state,navigate} = this.props.navigation;
     return (
-        <View>
-            {//<Tarjeta/>
-            }
+        <View style={styles.container}>
             <Text>Hola</Text>
+            <Button style={styles.button} onPress={this.pressing()}>
+                <Text style={styles.buttonText}>Holaaaa</Text>
+            </Button>
             
-        {/*
-        <WebView
-                    style={ styles.WebViewContainer }
-                    javaScriptEnabled={true}
-                    
-                    //tgbNymZ7vqY WORKS
-                    //ySoeapm4hpM VEVO
-                    source={{uri: 'https://www.youtube.com/embed/tgbNymZ7vqY?rel=0&amp;showinfo=0'}}
-            />
-
-
-        <TouchableHighlight onPress={() => this.props.navigation.goBack()}
-            style={[styles.button, {backgroundColor: '#C56EE0'}]}>
-                <Text style={styles.buttonText}>Go back</Text>
-            </TouchableHighlight>
-
-            <TouchableHighlight onPress={() => navigate("ScreenThree",{screen:"Screen*Three"})}
-            style={[styles.button, {backgroundColor: '#4286f4'}]}>
-                <Text style={styles.buttonText}>Go forward</Text>
-            </TouchableHighlight>*/}
+        
         </View>
         
             
