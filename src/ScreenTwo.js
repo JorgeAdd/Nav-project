@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {  View, Text, TouchableHighlight,StyleSheet,WebView,Platform } from 'react-native';
 import {Container, Button} from 'native-base';
 
-import Tarjeta from './Tarjeta';
+//import Tarjeta from './Tarjeta';
 
 import OneSignal from 'react-native-onesignal';
 
@@ -18,14 +18,14 @@ class ScreenTwo extends Component {
         let contents = {
             'en': 'You got notification from React-native'
         }   
-       // OneSignal.postNotification(contents,data,playerId);
 
-            OneSignal.sendTags({
-              "userId": 'jdelgado@frontrunnertechnologies.net'
-            });
-    }
-    pressing(){
-        alert('k');
+        OneSignal.sendTags({
+            "email": 'jdelgado@frontrunnertechnologies.net'
+        });
+        OneSignal.getTags(function(tags){
+            alert(tags.email);
+        });
+        OneSignal.postNotification(contents,data,playerId);
     }
 
   render() {
@@ -33,9 +33,8 @@ class ScreenTwo extends Component {
     return (
         <View style={styles.container}>
             <Text>Hola</Text>
-            <Button style={styles.button} onPress={this.pressing()}>
-                <Text style={styles.buttonText}>Holaaaa</Text>
-            </Button>
+            <Text style={styles.buttonText}>Holaaaa</Text>
+            
             
         
         </View>

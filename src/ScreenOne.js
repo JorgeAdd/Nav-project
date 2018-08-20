@@ -9,9 +9,9 @@ import FadeView from './FadeView';
 //import PushNotif from 'react-native-push-notification';
 
 //import BackgroundTask from 'react-native-background-task';
- import BackgroundJob from 'react-native-background-job';
+ //import BackgroundJob from 'react-native-background-job';
 
-//  import OneSignal from 'react-native-onesignal';
+ import OneSignal from 'react-native-onesignal';
 
 //BackgroundTask.define(
  // Alert.alert('Hello from a background task'),
@@ -19,30 +19,7 @@ import FadeView from './FadeView';
   
 //  BackgroundTask.finish()
 //)
-const backgroundJob = {
-    jobKey: "myJob",
-    job: () => {
-        console.log("Running in background")
-        // PushNotif.localNotification({
-        //     message:'Notificación creada',
-        //     group:"notifica",
-        //     ongoing:true
-        // })
-    }
-    
-   };
-   
-   BackgroundJob.register(backgroundJob);
-   
-   var backgroundSchedule = {
-    jobKey: "myJob",
-    period: 900000,
-    exact: true,
-    allowWhileIdle:true,
-    allowExecutionInForeground: true,
-    timeout: 5000
-   }
-   
+ 
 
 class ScreenOne extends Component {
 
@@ -87,7 +64,12 @@ class ScreenOne extends Component {
     };
     componentDidMount(){
         this.props.navigation.setParams({handleRemove:this.openDrawerVar});
-        BackgroundJob.schedule(backgroundSchedule);
+        OneSignal.sendTags({
+            "email": 'dmorales@frontrunnertechnologies.net'
+        });
+        OneSignal.getTags(function(tags){
+            alert(tags.email);
+        });
 
         // PushNotif.configure({
         //     onNotification: function(notification){
